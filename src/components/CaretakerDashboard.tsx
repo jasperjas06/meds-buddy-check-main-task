@@ -484,11 +484,11 @@ const adherenceStats = () => {
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                           activity.taken ? 'bg-green-100' : 
-                          activity.status === 'missed' ? 'bg-red-100' : 'bg-yellow-100'
+                          activity.status === 'pending' ? 'bg-red-100' : 'bg-yellow-100'
                         }`}>
                           {activity.taken ? (
                             <Check className="w-5 h-5 text-green-600" />
-                          ) : activity.status === 'missed' ? (
+                          ) : activity.status === 'pending' ? (
                             <AlertTriangle className="w-5 h-5 text-red-600" />
                           ) : (
                             <Clock className="w-5 h-5 text-yellow-600" />
@@ -499,13 +499,13 @@ const adherenceStats = () => {
                           <p className="text-sm text-muted-foreground">
                             {format(new Date(activity.date), 'EEEE, MMMM d')} - 
                             {activity.taken ? ` Taken at ${activity.time}` : 
-                             activity.status === 'missed' ? ' Medication missed' : ' Pending'}
+                             activity.status === 'pending' ? ' Medication missed | Pending' : ' Taken'}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge variant={activity.taken ? "secondary" : 
-                                      activity.status === 'missed' ? "destructive" : "outline"}>
+                                      activity.status === 'pending' ? "destructive" : "outline"}>
                           {activity.status.charAt(0).toUpperCase() + activity.status.slice(1)}
                         </Badge>
                       </div>
