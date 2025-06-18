@@ -4,6 +4,7 @@ import { Users, User, Heart, Sparkles, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Footer from "./Footer";
+import { useAuth } from "@/context/AuthContext";
 
 interface OnboardingProps {
   onComplete: (userType: "patient" | "caretaker") => void;
@@ -11,7 +12,9 @@ interface OnboardingProps {
 
 const Onboarding = ({ onComplete }: OnboardingProps) => {
   const navigate = useNavigate();
+  const { setRole } = useAuth();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
@@ -106,7 +109,10 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
                 
                 <Button 
                   className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold py-4 rounded-xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  onClick={() => navigate("/patient-login")}
+                  onClick={() => {
+    setRole("patient");
+    navigate("/patient-login");
+  }}
                 >
                   <User className="w-5 h-5 mr-2" />
                   Continue as Patient
@@ -155,7 +161,10 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
                 
                 <Button 
                   className="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-white font-semibold py-4 rounded-xl text-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  onClick={() => navigate("/caretaker-login")}
+                 onClick={() => {
+    setRole("caretaker");
+    navigate("/caretaker-login");
+  }}
                 >
                   <Shield className="w-5 h-5 mr-2" />
                   Continue as Caretaker

@@ -4,14 +4,18 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("tmm_access_token");
     if (storedToken) setToken(storedToken);
   }, []);
+  useEffect(() => {
+    console.log(role)
+  }, [role]);
 
   return (
-    <AuthContext.Provider value={{ token, setToken }}>
+    <AuthContext.Provider value={{ token, setToken, role, setRole }}>
       {children}
     </AuthContext.Provider>
   );

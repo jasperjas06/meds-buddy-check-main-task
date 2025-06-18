@@ -123,7 +123,7 @@ const PatientSelector = () => {
             <CardHeader className="text-center pb-6 relative z-10">
               <div className="relative mb-6">
                 <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-green-500 rounded-3xl flex items-center justify-center mx-auto shadow-lg transition-all duration-500 group-hover:rotate-12 group-hover:scale-110">
-                  h
+                  <img src="https://cdn-icons-png.flaticon.com/128/3916/3916579.png" width={"50%"} alt="icon" />
                 </div>
                 <div className="absolute inset-0 w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-emerald-400 to-green-500 blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-500"></div>
               </div>

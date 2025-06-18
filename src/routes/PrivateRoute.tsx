@@ -7,12 +7,29 @@ import AddMedication from "@/components/AddMedication";
 import NotFound from "@/pages/NotFound";
 
 const PrivateRoute = () => {
+  const { token, role } = useAuth();
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
   return (
     <Routes>
-      <Route path="/patient-dashboard/:patientId" element={<PatientDashboard />} />
+      {role === "patient" && (
+        <>
+          <Route path="/patient-dashboard/:patientId" element={<PatientDashboard />} />
+        </>
+      )}
+
+      {role === "caretaker" && (
+        <>
+          <Route path="/add-medication/:patientId" element={<AddMedication />} />
+          <Route path="/caretaker-dashboard/:patientId" element={<CaretakerDashboard />} />
+          <Route path="/patient-selector" element={<PatientSelector />} />
+        </>
+      )}
+      {/* <Route path="/patient-dashboard/:patientId" element={<PatientDashboard />} />
       <Route path="/caretaker-dashboard/:patientId" element={<CaretakerDashboard />} />
       <Route path="/patient-selector" element={<PatientSelector />} />
-      <Route path="/add-medication/:patientId" element={<AddMedication />} />
+      <Route path="/add-medication/:patientId" element={<AddMedication />} /> */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   )
