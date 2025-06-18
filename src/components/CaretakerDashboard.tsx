@@ -285,6 +285,7 @@ const adherenceStats = () => {
     if (error) {
       console.error("Logout failed:", error.message);
     } else {
+      localStorage.removeItem("tmm_access_token");
       window.location.href = "/"; // or use your app's login route
     }
   };

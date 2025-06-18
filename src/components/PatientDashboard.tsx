@@ -229,6 +229,7 @@ const PatientDashboard = () => {
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
+    localStorage.removeItem("tmm_access_token");
     if (!error) window.location.href = "/";
   };
 

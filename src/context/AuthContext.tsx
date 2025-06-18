@@ -1,44 +1,17 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import supabase from "@/supabaseClient";
 
-type User = {
-  id: string;
-  email: string;
-} | null;
+const AuthContext = createContext(null);
 
-const AuthContext = createContext<{
-  user: User;
-  loading: boolean;
-}>({ user: null, loading: true });
-
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User>(null);
-  const [loading, setLoading] = useState(true);
+export const AuthProvider = ({ children }) => {
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user ? { id: data.user.id, email: data.user.email } : null);
-      setLoading(false);
-    };
-
-    getUser();
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email });
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    const storedToken = localStorage.getItem("tmm_access_token");
+    if (storedToken) setToken(storedToken);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading }}>
+    <AuthContext.Provider value={{ token, setToken }}>
       {children}
     </AuthContext.Provider>
   );
