@@ -291,7 +291,32 @@ const adherenceStats = () => {
   };
 
   return (
-    <div className="space-y-6">
+        <div className="space-y-6 ">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden ">
+        {/* Animated Background Elements */}
+        <div className="absolute  overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
+        </div>
+
+        {/* Floating Particles */}
+        <div className="absolute ">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full opacity-30"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animation: `float ${
+                  3 + Math.random() * 2
+                }s ease-in-out infinite alternate`,
+              }}
+            />
+          ))}
+        </div>
       {/* Header Section */}
       <div className="bg-gradient-to-r from-green-500 to-blue-500 rounded-2xl p-8 text-white">
         <div className="flex items-center justify-between gap-4 mb-6">
@@ -312,7 +337,7 @@ const adherenceStats = () => {
   <Button
     variant="outline"
     onClick={handleLogout}
-    className="text-black border-white hover:bg-white/10 transition-colors hover:text-white"
+    className="text-black z-50 border-white hover:bg-white/10 transition-colors hover:text-white"
   >
     Logout
   </Button>
@@ -340,8 +365,8 @@ const adherenceStats = () => {
       </div>
 
       {/* Main Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 mt-2 z0-50">
+        <TabsList className="grid w-full bg-white/50  grid-cols-4">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="activity">Recent Activity</TabsTrigger>
           <TabsTrigger value="calendar">Calendar View</TabsTrigger>
@@ -362,10 +387,10 @@ const adherenceStats = () => {
                 <div className="space-y-3">
   {todaysMeds.length > 0 ? (
     todaysMeds.map((med) => (
-      <div key={med.id} className="flex items-center justify-between p-3 bg-accent/50 rounded-lg">
+      <div key={med.id} className="flex items-center text-white justify-between p-3 bg-accent/50 rounded-lg">
         <div>
           <h4 className="font-medium">{med.name}</h4>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-gray/50">
             {med.time ? format(parseISO(`2000-01-01T${med.time}`), 'h:mm a') : 'No time set'}
           </p>
         </div>
@@ -373,7 +398,7 @@ const adherenceStats = () => {
           <Badge
   className={
     med.status === "pending"
-      ? "bg-red-500 text-white"
+      ? "bg-[#f97316] text-white"
       : med.status === "taken"
       ? "bg-green-500 text-white"
       : "bg-gray-300 text-gray-800"
@@ -391,6 +416,7 @@ const adherenceStats = () => {
           {med.status === "pending" && (
             <Button
               size="sm"
+              className="bg-[#16a34a]"
               onClick={() => updateMedicationStatus(med.id, "taken")}
             >
               Mark as Taken
@@ -400,7 +426,7 @@ const adherenceStats = () => {
       </div>
     ))
   ) : (
-    <p className="text-muted-foreground">No medications scheduled for today</p>
+    <p className="text-white">No medications scheduled for today</p>
   )}
 </div>
 
@@ -756,6 +782,7 @@ const adherenceStats = () => {
           </Card>
         </TabsContent>
       </Tabs>
+    </div>
     </div>
   );
 };

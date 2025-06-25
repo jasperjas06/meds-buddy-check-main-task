@@ -10,6 +10,7 @@ import { Check, Calendar as CalendarIcon, User } from "lucide-react";
 import MedicationTracker from "./MedicationTracker";
 import { format, isToday, isBefore, startOfDay } from "date-fns";
 import supabase from "@/supabaseClient";
+import Footer from "./Footer";
 
 interface Patient {
   id: string;
@@ -36,23 +37,21 @@ const PatientDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   const today = new Date();
-  const todayStr = format(today, 'yyyy-MM-dd');
-  const selectedDateStr = format(selectedDate, 'yyyy-MM-dd');
+  const todayStr = format(today, "yyyy-MM-dd");
+  const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
   const isTodaySelected = isToday(selectedDate);
 
   // Get taken dates for calendar (medications with status 'taken')
   const takenDates = new Set(
-    medications
-      .filter(med => med.status === 'taken')
-      .map(med => med.date)
+    medications.filter((med) => med.status === "taken").map((med) => med.date)
   );
 
   // Get medication status for selected date
   const selectedDateMedications = medications
-    .filter(med => med.date === selectedDateStr)
-    .map(med => ({
+    .filter((med) => med.date === selectedDateStr)
+    .map((med) => ({
       ...med,
-      isTaken: med.status === 'taken'
+      isTaken: med.status === "taken",
     }));
 
   useEffect(() => {
@@ -62,7 +61,7 @@ const PatientDashboard = () => {
 
   const fetchData = async () => {
     if (!patientId) return;
-    
+
     setLoading(true);
     try {
       // Fetch patient data
@@ -90,9 +89,8 @@ const PatientDashboard = () => {
         console.error("Error fetching medications:", medicationsError);
         return;
       }
-      
-      setMedications(medicationsData || []);
 
+      setMedications(medicationsData || []);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -100,7 +98,11 @@ const PatientDashboard = () => {
     }
   };
 
-  const handleMarkTaken = async (medicationId: string, date: string, imageFile?: File) => {
+  const handleMarkTaken = async (
+    medicationId: string,
+    date: string,
+    imageFile?: File
+  ) => {
     if (!patientId) return;
     setIsSubmitting(true);
 
@@ -108,8 +110,8 @@ const PatientDashboard = () => {
       // Update medication status to 'taken'
       const { error } = await supabase
         .from("medications")
-        .update({ 
-          status: 'taken'
+        .update({
+          status: "taken",
         })
         .eq("id", medicationId);
 
@@ -119,11 +121,9 @@ const PatientDashboard = () => {
       }
 
       // Update local state
-      setMedications(prev => 
-        prev.map(med => 
-          med.id === medicationId
-            ? { ...med, status: 'taken' }
-            : med
+      setMedications((prev) =>
+        prev.map((med) =>
+          med.id === medicationId ? { ...med, status: "taken" } : med
         )
       );
 
@@ -143,8 +143,8 @@ const PatientDashboard = () => {
       // Update medication status back to 'pending' or 'skipped'
       const { error } = await supabase
         .from("medications")
-        .update({ 
-          status: 'pending'
+        .update({
+          status: "pending",
         })
         .eq("id", medicationId);
 
@@ -154,11 +154,9 @@ const PatientDashboard = () => {
       }
 
       // Update local state
-      setMedications(prev => 
-        prev.map(med => 
-          med.id === medicationId
-            ? { ...med, status: 'pending' }
-            : med
+      setMedications((prev) =>
+        prev.map((med) =>
+          med.id === medicationId ? { ...med, status: "pending" } : med
         )
       );
 
@@ -173,13 +171,15 @@ const PatientDashboard = () => {
   const getStreakCount = () => {
     let streak = 0;
     const currentDate = new Date(today);
-    
+
     while (streak < 30) {
       const dateStr = format(currentDate, "yyyy-MM-dd");
-      const dayMedications = medications.filter(med => med.date === dateStr);
+      const dayMedications = medications.filter((med) => med.date === dateStr);
       const totalMedications = dayMedications.length;
-      const takenMedications = dayMedications.filter(med => med.status === 'taken').length;
-      
+      const takenMedications = dayMedications.filter(
+        (med) => med.status === "taken"
+      ).length;
+
       // Consider day complete if all medications are taken
       if (totalMedications > 0 && takenMedications === totalMedications) {
         streak++;
@@ -192,44 +192,51 @@ const PatientDashboard = () => {
   };
 
   const getTodayCompletionStatus = () => {
-    const todayMedications = medications.filter(med => med.date === todayStr);
+    const todayMedications = medications.filter((med) => med.date === todayStr);
     const totalMedications = todayMedications.length;
-    const takenMedications = todayMedications.filter(med => med.status === 'taken').length;
-    
+    const takenMedications = todayMedications.filter(
+      (med) => med.status === "taken"
+    ).length;
+
     if (totalMedications === 0) return "No meds";
-    return takenMedications === totalMedications ? "✓" : `${takenMedications}/${totalMedications}`;
+    return takenMedications === totalMedications
+      ? "✓"
+      : `${takenMedications}/${totalMedications}`;
   };
 
   const getMonthlyCompletionRate = () => {
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
+
     let completedDays = 0;
     let totalDays = 0;
-    
+
     const currentDate = new Date(thirtyDaysAgo);
     while (currentDate <= today) {
       const dateStr = format(currentDate, "yyyy-MM-dd");
-      const dayMedications = medications.filter(med => med.date === dateStr);
+      const dayMedications = medications.filter((med) => med.date === dateStr);
       const totalMedications = dayMedications.length;
-      const takenMedications = dayMedications.filter(med => med.status === 'taken').length;
-      
+      const takenMedications = dayMedications.filter(
+        (med) => med.status === "taken"
+      ).length;
+
       if (totalMedications > 0) {
         totalDays++;
         if (takenMedications === totalMedications) {
           completedDays++;
         }
       }
-      
+
       currentDate.setDate(currentDate.getDate() + 1);
     }
-    
+
     return totalDays > 0 ? Math.round((completedDays / totalDays) * 100) : 0;
   };
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     localStorage.removeItem("tmm_access_token");
+    localStorage.removeItem("tmm_role");
     if (!error) window.location.href = "/";
   };
 
@@ -245,133 +252,191 @@ const PatientDashboard = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-r from-blue-500 to-green-500 rounded-2xl p-8 text-white">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
-              <User className="w-8 h-8" />
-            </div>
-            <div>
-              <h2 className="text-3xl font-bold">
-                Hello {patient?.name || "Patient"}
-              </h2>
-              <p className="text-white/90 text-lg">
-                Monitoring medication adherence
-              </p>
-            </div>
-          </div>
-          <Button variant="outline" onClick={handleLogout} className="text-black border-white hover:bg-white/10 transition-colors hover:text-white">
-            Logout
-          </Button>
+    <div className="space-y-6 ">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden p-4">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse animation-delay-4000"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-          <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-            <div className="text-2xl font-bold">{getStreakCount()}</div>
-            <div className="text-white/80">Day Streak</div>
-          </div>
-          <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-            <div className="text-2xl font-bold">{getTodayCompletionStatus()}</div>
-            <div className="text-white/80">Today's Status</div>
-          </div>
-          <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
-            <div className="text-2xl font-bold">{getMonthlyCompletionRate()}%</div>
-            <div className="text-white/80">Monthly Rate</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Card className="h-fit">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-2xl">
-                <CalendarIcon className="w-6 h-6 text-blue-600" />
-                {isTodaySelected ? "Today's Medication" : `Medication for ${format(selectedDate, "MMMM d, yyyy")}`}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <MedicationTracker
-                medications={selectedDateMedications}
-                date={selectedDateStr}
-                onMarkTaken={handleMarkTaken}
-                onMarkNotTaken={handleMarkNotTaken}
-                isToday={isTodaySelected}
-                isSubmitting={isSubmitting}
-              />
-            </CardContent>
-          </Card>
+        {/* Floating Particles */}
+        <div className="absolute inset-0">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-1 h-1 bg-white rounded-full opacity-30"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animation: `float ${
+                  3 + Math.random() * 2
+                }s ease-in-out infinite alternate`,
+              }}
+            />
+          ))}
         </div>
 
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl">Medication Calendar</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                className="w-full"
-                modifiersClassNames={{
-                  selected: "bg-blue-600 text-white hover:bg-blue-700",
-                }}
-                components={{
-                  DayContent: ({ date }) => {
-                    const dateStr = format(date, "yyyy-MM-dd");
-                    const dayMedications = medications.filter(med => med.date === dateStr);
-                    const totalMedications = dayMedications.length;
-                    const takenMedications = dayMedications.filter(med => med.status === 'taken').length;
-                    const isFullyTaken = totalMedications > 0 && takenMedications === totalMedications;
-                    const isPartiallyTaken = takenMedications > 0 && takenMedications < totalMedications;
-                    const isPast = isBefore(date, startOfDay(today));
-                    const isCurrentDay = isToday(date);
-
-                    return (
-                      <div className="relative w-full h-full flex items-center justify-center">
-                        <span>{date.getDate()}</span>
-                        {isFullyTaken && (
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                            <Check className="w-2 h-2 text-white" />
-                          </div>
-                        )}
-                        {isPartiallyTaken && (
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center">
-                            <span className="text-white text-xs">{takenMedications}</span>
-                          </div>
-                        )}
-                        {!isPartiallyTaken && !isFullyTaken && isPast && !isCurrentDay && totalMedications > 0 && (
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-400 rounded-full"></div>
-                        )}
-                      </div>
-                    );
-                  },
-                }}
-              />
-
-              <div className="mt-4 space-y-2 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span>All medications taken</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <span>Partially taken</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                  <span>Missed medications</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <span>Today</span>
-                </div>
+        <div className="bg-gradient-to-r from-blue-500/80 to-green-500/80 rounded-2xl mb-2 p-8 text-white">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center">
+                <User className="w-8 h-8" />
               </div>
-            </CardContent>
-          </Card>
+              <div>
+                <h2 className="text-3xl font-bold">
+                  Hello {patient?.name || "Patient"}
+                </h2>
+                <p className="text-white/90 text-lg">
+                  Monitoring medication adherence
+                </p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleLogout}
+              className="text-black border-white hover:bg-white/10 z-50 transition-colors hover:text-white"
+            >
+              Logout
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+              <div className="text-2xl font-bold">{getStreakCount()}</div>
+              <div className="text-white/80">Day Streak</div>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+              <div className="text-2xl font-bold">
+                {getTodayCompletionStatus()}
+              </div>
+              <div className="text-white/80">Today's Status</div>
+            </div>
+            <div className="bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+              <div className="text-2xl font-bold">
+                {getMonthlyCompletionRate()}%
+              </div>
+              <div className="text-white/80">Monthly Rate</div>
+            </div>
+          </div>
         </div>
+
+        <div className="grid lg:grid-cols-3 gap-6 mt-4">
+          <div className="lg:col-span-2">
+            <Card className="h-fit bg-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center text-white gap-2 text-2xl">
+                  <CalendarIcon className="w-6 h-6 text-blue-600" />
+                  {isTodaySelected
+                    ? "Today's Medication"
+                    : `Medication for ${format(selectedDate, "MMMM d, yyyy")}`}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <MedicationTracker
+                  medications={selectedDateMedications}
+                  date={selectedDateStr}
+                  onMarkTaken={handleMarkTaken}
+                  onMarkNotTaken={handleMarkNotTaken}
+                  isToday={isTodaySelected}
+                  isSubmitting={isSubmitting}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          <div>
+            <Card className="h-fit bg-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-xl text-white">
+                  Medication Calendar
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col lg:flex-row gap-6">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  className="w-full lg:w-2/3"
+                  modifiersClassNames={{
+                    selected:
+                      "bg-blue-600 text-white hover:bg-blue-700 rounded-full",
+                  }}
+                  components={{
+                    DayContent: ({ date }) => {
+                      const dateStr = format(date, "yyyy-MM-dd");
+                      const dayMedications = medications.filter(
+                        (med) => med.date === dateStr
+                      );
+                      const totalMedications = dayMedications.length;
+                      const takenMedications = dayMedications.filter(
+                        (med) => med.status === "taken"
+                      ).length;
+                      const isFullyTaken =
+                        totalMedications > 0 &&
+                        takenMedications === totalMedications;
+                      const isPartiallyTaken =
+                        takenMedications > 0 &&
+                        takenMedications < totalMedications;
+                      const isPast = isBefore(date, startOfDay(today));
+                      const isCurrentDay = isToday(date);
+
+                      return (
+                        <div className="relative w-9 h-9 flex items-center justify-center">
+                          <span className="z-10">{date.getDate()}</span>
+
+                          {isFullyTaken && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center z-20">
+                              <Check className="w-2 h-2 text-white" />
+                            </div>
+                          )}
+
+                          {isPartiallyTaken && (
+                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-500 rounded-full flex items-center justify-center z-20">
+                              <span className="text-white text-[10px] font-medium">
+                                {takenMedications}
+                              </span>
+                            </div>
+                          )}
+
+                          {!isPartiallyTaken &&
+                            !isFullyTaken &&
+                            isPast &&
+                            !isCurrentDay &&
+                            totalMedications > 0 && (
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-400 rounded-full z-20"></div>
+                            )}
+                        </div>
+                      );
+                    },
+                  }}
+                />
+
+                <div className="lg:mt-0 mt-4 space-y-3 text-sm text-white/70">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full" />
+                    <span>All medications taken</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full" />
+                    <span>Partially taken</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-red-400 rounded-full" />
+                    <span>Missed medications</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full" />
+                    <span>Today</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        <Footer />
       </div>
     </div>
   );

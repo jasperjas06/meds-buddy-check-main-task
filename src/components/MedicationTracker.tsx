@@ -85,8 +85,8 @@ const MedicationTracker = ({
   if (medications.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
-        <Pill className="w-12 h-12 mx-auto mb-4 opacity-50" />
-        <p>No medications scheduled for this date.</p>
+        <Pill color="white" className="w-12 h-12 mx-auto mb-4  opacity-50" />
+        <p className="text-white">No medications scheduled for this date.</p>
       </div>
     );
   }
@@ -95,15 +95,15 @@ const MedicationTracker = ({
   if (allCompleted) {
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-center p-8 bg-green-50 rounded-xl border-2 border-green-200">
+        <div className="flex items-center justify-center p-8 bg-white/20 rounded-xl border-2 border-green-200">
           <div className="text-center">
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-xl font-semibold text-green-800 mb-2">
+            <h3 className="text-xl text-white font-semibold text-green-800 mb-2">
               All Medications Completed!
             </h3>
-            <p className="text-green-600">
+            <p className="text-gray-80">
               Great job! You've taken all your medications for {format(new Date(date), 'MMMM d, yyyy')}.
             </p>
           </div>
@@ -111,7 +111,7 @@ const MedicationTracker = ({
 
         <div className="space-y-3">
           {completedMedications.map((medication) => (
-            <Card key={medication.id} className="border-green-200 bg-green-50/50">
+            <Card key={medication.id} className="border-green-200  bg-green-50/50">
               <CardContent className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
@@ -187,40 +187,40 @@ const MedicationTracker = ({
       {/* Pending Medications */}
       {pendingMedications.length > 0 && (
         <div>
-          <h3 className="text-lg font-semibold text-gray-700 mb-3 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
             <Clock className="w-5 h-5" />
             Pending ({pendingMedications.length})
           </h3>
           <div className="space-y-6">
             {pendingMedications.map((medication) => (
               <div key={medication.id} className="space-y-4">
-                <Card className="hover:shadow-md transition-shadow">
+                <Card className="hover:shadow-md bg-white/10 backdrop-blur-sm transition-shadow">
                   <CardContent className="flex items-center justify-between p-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                         <Pill className="w-5 h-5 text-blue-600" />
                       </div>
                       <div>
-                        <h4 className="font-medium">{medication.name}</h4>
-                        <p className="text-sm text-muted-foreground">
+                        <h4 className="font-medium text-white/90">{medication.name}</h4>
+                        <p className="text-sm text-white/80">
                           Scheduled for {medication.time}
                         </p>
                       </div>
                     </div>
                     <Badge variant="outline">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {medication.time}
+                      <Clock className="w-3 h-3 mr-1 text-white" />
+                      <p className="text-white/80">{medication.time}</p>
                     </Badge>
                   </CardContent>
                 </Card>
 
                 {/* Image Upload Section for this medication */}
-                <Card className="border-dashed border-2 border-border/50">
+                <Card className="border-dashed border-2 border-border/50 bg-white/10 backdrop-blur-sm">
                   <CardContent className="p-4">
                     <div className="text-center">
-                      <Image className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                      <h4 className="font-medium mb-1 text-sm">Add Proof Photo (Optional)</h4>
-                      <p className="text-xs text-muted-foreground mb-3">
+                      <Image color="white" className="w-8 h-8  text-muted-foreground mx-auto mb-2" />
+                      <h4 className="font-medium text-white mb-1 text-sm">Add Proof Photo (Optional)</h4>
+                      <p className="text-xs text-white text-muted-foreground mb-3">
                         Take a photo of this medication as confirmation
                       </p>
 
@@ -236,7 +236,7 @@ const MedicationTracker = ({
                         variant="outline"
                         size="sm"
                         onClick={() => fileInputRefs.current[medication.id]?.click()}
-                        className="mb-3"
+                        className="mb-3 text-white border-white/50 bg-white/20 transition-colors"
                       >
                         <Camera className="w-4 h-4 mr-2" />
                         {selectedImages[medication.id] ? "Change Photo" : "Take Photo"}
@@ -289,7 +289,7 @@ const MedicationTracker = ({
 
       {!isToday && (
         <div className="text-center py-4">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/50">
             You can only update today's medication status
           </p>
         </div>
